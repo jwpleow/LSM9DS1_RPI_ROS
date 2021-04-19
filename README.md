@@ -1,38 +1,31 @@
-SparkFun LSM9DS1 RaspberryPI Library
-===
+# LSM9DS1 IMU on the Raspi, publishing to ROS
+Replace the i2c bus your imu is connected to in `wiringPiI2CSetup` of `LSM9DS1_RaspberryPi_Library/include/wiringPiI2C.h`   
 
-Porting [SparkFun_LSM9DS1_Arduino_Library](https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library) to Raspberry Pi
-
-<p align="center"><img src="https://user-images.githubusercontent.com/17570265/29253393-a11ac3a6-80b6-11e7-846f-0d387fa2fbe4.jpeg" alt="LSM9DS1" width="200"/></p>
-
-[LSM9DS1 Breakout Board (SEN-13284)](https://www.sparkfun.com/products/13284)
-
-This library supports only I2C.
-
-## Requirement
-
-* [WiringPi](http://wiringpi.com/)
-
+## Build
+(i'm not bothering to use catkin here, so make sure you have sensor_msgs installed)
 ```
-$ sudo apt-get install libi2c-dev
-$ git clone git://git.drogon.net/wiringPi
-$ cd wiringPi
-$ git pull origin
-$ ./build
+# source ros
+mkdir build
+cd build
+cmake ..
 ```
 
-## Install
+## Run
+```
+#source ros
+./imu_ros
+```
+Publishes acceleration and gyro to `/imu/data_raw` and mag to `/imu/mag`.
 
+### to publish to some other computer:
+from <http://wiki.ros.org/ROS/NetworkSetup>   
+replace the ip in ROS_MASTER_URI to the one running `roscore`   
+e.g.
 ```
-$ git clone https://github.com/akimach/LSM9DS1_RaspberryPi_Library.git
-$ cd LSM9DS1_RaspberryPi_Library
-$ make
-$ sudo make install
+export ROS_MASTER_URI=http://192.168.1.58:11311/
+export ROS_HOSTNAME=$(/bin/hostname) # these lower two should be the ip of the machine publishing
+export ROS_IP=$(/bin/hostname -I) # this could return multiple ip's though
+./imu_ros
 ```
-
-## Python version
-
-```
-$ cd LSM9DS1_RaspberryPi_Library/example
-$ sudo python LSM9DS1_Basic_I2C.py
-```
+Note: you may have to add the hostnames of each other in both computer's /etc/hosts   
+you also might have to deactivate/allow connections in ufw 

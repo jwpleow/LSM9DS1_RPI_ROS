@@ -20,10 +20,9 @@ local, and you've found our code helpful, please buy us a round!
 
 Distributed as-is; no warranty is given.
 ******************************************************************************/
-
+#include <iostream>
 #include <time.h>
 #include <unistd.h>
-#include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include "LSM9DS1.h"
 #include "LSM9DS1_Registers.h"
@@ -43,9 +42,6 @@ LSM9DS1::LSM9DS1(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
 
 void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
 {
-    if (wiringPiSetupGpio() == -1)
-        return;
-
     settings.device.commInterface = interface;
     settings.device.agAddress = xgAddr;
     settings.device.mAddress = mAddr;
@@ -60,7 +56,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 14.9    4 = 238
     // 2 = 59.5    5 = 476
     // 3 = 119     6 = 952
-    settings.gyro.sampleRate = 6;
+    settings.gyro.sampleRate = 3;
     // gyro cutoff frequency: value between 0-3
     // Actual value of cutoff frequency depends
     // on sample rate.
@@ -87,7 +83,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 10 Hz    4 = 238 Hz
     // 2 = 50 Hz    5 = 476 Hz
     // 3 = 119 Hz   6 = 952 Hz
-    settings.accel.sampleRate = 6;
+    settings.accel.sampleRate = 3;
     // Accel cutoff freqeuncy can be any value between -1 - 3.
     // -1 = bandwidth determined by sample rate
     // 0 = 408 Hz   2 = 105 Hz
@@ -156,7 +152,7 @@ uint16_t LSM9DS1::begin()
     uint16_t whoAmICombined = (xgTest << 8) | mTest;
 
     if (whoAmICombined != ((WHO_AM_I_AG_RSP << 8) | WHO_AM_I_M_RSP)) {
-        return 0;
+        throw std::runtime_error("WhoIAm returns wrong result. Check correct i2c bus specified or restart");
     }
 
     // Gyro initialization stuff:
@@ -500,6 +496,7 @@ void LSM9DS1::readAccel()
         ay = (temp[3] << 8) | temp[2]; // Store y-axis values into ay
         az = (temp[5] << 8) | temp[4]; // Store z-axis values into az
     } catch(int fError) {
+        std::cerr << "Error reading accel\n";
         ax = ay = az = 999;
         return;
     }
@@ -557,6 +554,7 @@ void LSM9DS1::readGyro()
         gy = (temp[3] << 8) | temp[2]; // Store y-axis values into gy
         gz = (temp[5] << 8) | temp[4]; // Store z-axis values into gz
     } catch(int fError) {
+        std::cerr << "Error reading gyro\n";
         gx = gy = gz = 9999;
         return;
     }
@@ -1103,10 +1101,11 @@ uint8_t LSM9DS1::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * des
     }
     wiringPiI2CWrite(_fd, subAddress);
     uint8_t temp_dest[count];
-    if ((read(_fd, temp_dest, 6)) < 0) {
+    while ((read(_fd, temp_dest, 6)) < 0) {
+        std::cerr << "Error in reading value from i2c, trying again...\n";
         //fprintf(stderr, "Error: read value\n");
-        throw 999;
-        return 0;
+        // throw 999;
+        // return 0;
     }
     close(_fd);
     for (int i = 0; i < count; i++) {
