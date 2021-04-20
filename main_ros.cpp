@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     ros::Publisher imu_pub = n.advertise<sensor_msgs::Imu>("imu/data_raw", 50);
     ros::Publisher mag_pub = n.advertise<sensor_msgs::MagneticField>("imu/mag", 50);
 
-    ros::Rate rate(80.0); // mag maxes out at 80Hz, perhaps poll data separately?
+    ros::Rate rate(70.0); // mag maxes out at 80Hz, perhaps poll data separately?
 
     uint32_t seq = 0;
     if (ros::ok())
