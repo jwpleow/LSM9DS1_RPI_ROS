@@ -9,30 +9,4 @@ Porting [SparkFun_LSM9DS1_Arduino_Library](https://github.com/sparkfun/SparkFun_
 
 This library supports only I2C.
 
-## Requirement
-
-* [WiringPi](http://wiringpi.com/)
-
-```
-$ sudo apt-get install libi2c-dev
-$ git clone git://git.drogon.net/wiringPi
-$ cd wiringPi
-$ git pull origin
-$ ./build
-```
-
-## Install
-
-```
-$ git clone https://github.com/akimach/LSM9DS1_RaspberryPi_Library.git
-$ cd LSM9DS1_RaspberryPi_Library
-$ make
-$ sudo make install
-```
-
-## Python version
-
-```
-$ cd LSM9DS1_RaspberryPi_Library/example
-$ sudo python LSM9DS1_Basic_I2C.py
-```
+Taken from <https://github.com/akimach/LSM9DS1_RaspberryPi_Library>
