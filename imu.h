@@ -33,11 +33,11 @@ public:
         {
             timestamp = ros::Time::now();
             imu_.readGyro();
-            gx = imu_.calcGyro(imu_.gx); // rad/s
+            gx = imu_.calcGyro(imu_.gx); // deg/s
             gy = imu_.calcGyro(imu_.gy);
             gz = imu_.calcGyro(imu_.gz);
             imu_.readAccel();
-            ax = imu_.calcAccel(imu_.ax);
+            ax = imu_.calcAccel(imu_.ax); // g
             ay = imu_.calcAccel(imu_.ay);
             az = imu_.calcAccel(imu_.az);
             return true;
@@ -54,7 +54,7 @@ public:
         {
             timestamp = ros::Time::now();
             imu_.readMag();
-            mx = imu_.calcMag(imu_.mx);
+            mx = imu_.calcMag(imu_.mx); // gauss
             my = imu_.calcMag(imu_.my);
             mz = imu_.calcMag(imu_.mz);
             return true;
@@ -74,7 +74,7 @@ public:
             fprintf(stderr, "Failed to communicate with LSM9DS1.\n");
             exit(EXIT_FAILURE);
         }
-        imu_.calibrate();
+
     }
     virtual ~IMU()
     {

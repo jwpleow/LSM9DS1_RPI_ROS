@@ -16,7 +16,9 @@ Note: the library runs a small automatic calibration script when started, so ens
 #source ros
 ./imu_ros
 ```
-Publishes acceleration and gyro to `/imu/data_raw` and mag to `/imu/mag`.
+Publishes acceleration and gyro to `/imu/data_temp` and mag to `/imu/mag`.   
+
+Note: the data needs to be calibrated for scales/axis misalignment!
 
 ### to publish to some other computer:
 from <http://wiki.ros.org/ROS/NetworkSetup>   

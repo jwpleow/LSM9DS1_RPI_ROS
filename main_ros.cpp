@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle n;
 
-    ros::Publisher imu_pub = n.advertise<sensor_msgs::Imu>("imu/data_raw", 30);
+    ros::Publisher imu_pub = n.advertise<sensor_msgs::Imu>("imu/data_temp", 30);
     ros::Publisher mag_pub = n.advertise<sensor_msgs::MagneticField>("imu/mag", 30);
 
     ros::Rate rate(200.0); // mag maxes out at 80Hz, perhaps poll data separately?
@@ -43,14 +43,24 @@ int main(int argc, char **argv)
         imu_msg.header.seq = seq1;
         imu_msg.header.stamp = timestamp1;
         imu_msg.header.frame_id = "imu_link";
-        
-        imu_msg.angular_velocity.x = gx * M_PI / 180.0; // deg/s -> rad/s // forward
-        imu_msg.angular_velocity.y = - gy * M_PI / 180.0; // left
-        imu_msg.angular_velocity.z = gz * M_PI / 180.0; // up
 
-        imu_msg.linear_acceleration.x = ax * 9.81; // g's -> m/s^2
-        imu_msg.linear_acceleration.y = - ay * 9.81; // +ve for nose down
-        imu_msg.linear_acceleration.z = az * 9.81;
+        // forward left up (right hand convention) - https://www.ros.org/reps/rep-0145.html
+        imu_msg.angular_velocity.x = gx * M_PI / 180.0; // deg/s -> rad/s 
+        imu_msg.angular_velocity.y = -gy * M_PI / 180.0; // +ve for nose down
+        imu_msg.angular_velocity.z = gz * M_PI / 180.0;
+
+        imu_msg.linear_acceleration.x = ax * 9.81; // g's -> m/s^2 // forward
+        imu_msg.linear_acceleration.y = - ay * 9.81; // left
+        imu_msg.linear_acceleration.z = az * 9.81; // up
+
+        // test euroc convention? up right forward?
+        // imu_msg.angular_velocity.x = gz * M_PI / 180.0;
+        // imu_msg.angular_velocity.y = gy * M_PI / 180.0; 
+        // imu_msg.angular_velocity.z = gx * M_PI / 180.0; 
+
+        // imu_msg.linear_acceleration.x = az * 9.81; 
+        // imu_msg.linear_acceleration.y = ay * 9.81; 
+        // imu_msg.linear_acceleration.z = ax * 9.81; 
 
         // no orientation
         imu_msg.orientation_covariance[0] = -1;
