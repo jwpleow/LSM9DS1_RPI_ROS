@@ -11,7 +11,6 @@ cmake ..
 ```
 
 ## Run
-Note: the library runs a small automatic calibration script when started, so ensure that the imu is level and stationary at the start
 ```
 #source ros
 ./imu_ros
